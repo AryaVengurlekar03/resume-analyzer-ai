@@ -1,0 +1,23 @@
+with open("resume.txt", "r") as file:
+
+    resume_text = file.read()
+
+skills = [
+    "Python",
+    "SQL",
+    "AWS",
+    "Docker",
+    "Git"
+]
+
+found_skills = []
+
+for skill in skills:
+
+    if skill.lower() in resume_text.lower():
+
+        found_skills.append(skill)
+
+print("Skills Found:")
+
+print(found_skills)
