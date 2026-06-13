@@ -1,0 +1,20 @@
+python
+java
+c++
+sql
+mysql
+html
+css
+javascript
+react
+nodejs
+flask
+django
+aws
+docker
+kubernetes
+linux
+git
+github
+machine learning
+data analysis
