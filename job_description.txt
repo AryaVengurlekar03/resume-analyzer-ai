@@ -1,0 +1,14 @@
+Python Developer
+
+Requirements:
+
+Python
+SQL
+AWS
+Docker
+Kubernetes
+Git
+
+Experience with APIs
+
+Knowledge of Linux

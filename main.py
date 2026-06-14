@@ -1,6 +1,8 @@
 from extractor import extract_text
 from analyzer import detect_skills
 from scorer import calculate_ats_score, get_rating, get_recommendations
+from matcher import read_job_description, extract_jd_skills, calculate_match_score, get_missing_skills
+
 
 # ==========================================
 # STEP 1: Load Resume
@@ -48,7 +50,7 @@ print(rating)
 
 print("\n" + "=" * 50)
 
-#recommendation
+# recommendation
 
 recommendations = get_recommendations(
     ats_score
@@ -58,3 +60,29 @@ print("\nRecommendations:")
 
 for item in recommendations:
     print("-", item)
+
+jd_text = read_job_description(
+    "job_description.txt"
+)
+
+jd_skills = extract_jd_skills(
+    jd_text
+)
+
+match_score = calculate_match_score(
+    skills,
+    jd_skills
+)
+
+missing_skills = get_missing_skills(
+    skills,
+    jd_skills
+)
+
+print("\nJob Match Score:")
+print(match_score, "%")
+
+print("\nMissing Skills:")
+
+for skill in missing_skills:
+    print("-", skill)
