@@ -1,0 +1,12 @@
+Python Developer
+
+Required Skills:
+
+Python
+SQL
+AWS
+Docker
+Kubernetes
+Git
+Linux
+React
