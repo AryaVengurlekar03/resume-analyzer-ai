@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 from extractor import extract_text
 from analyzer import detect_skills
@@ -39,20 +40,20 @@ resume_file = st.file_uploader(
 
 jd_file = st.file_uploader(
     "Upload Job Description",
-    type=["txt"]
+    type=["txt", "pdf"]
 )
 
 # ==========================================
-# PROCESS FILES
+# MAIN LOGIC
 # ==========================================
 
 if resume_file:
 
-    # Save uploaded resume
+    # Save Resume
     with open("uploaded_resume.pdf", "wb") as f:
         f.write(resume_file.getbuffer())
 
-    # Extract resume text
+    # Extract Resume Text
     resume_text = extract_text(
         "uploaded_resume.pdf"
     )
@@ -83,7 +84,7 @@ if resume_file:
         resume_text
     )
 
-    # ATS
+    # ATS Score
     ats_score = calculate_ats_score(
         resume_text,
         skills
@@ -93,41 +94,69 @@ if resume_file:
         ats_score
     )
 
+    # Default Values
+    match_score = 0
+    jd_skills = []
+    missing_skills = []
+
     # ==========================================
     # JOB DESCRIPTION
     # ==========================================
 
-    match_score = 0
-    missing_skills = []
-    jd_skills = []
+    if jd_file is not None:
 
-    if jd_file:
+        jd_text = ""
 
-        jd_text = jd_file.read().decode(
-            "utf-8"
-        )
+        # TXT File
+        if jd_file.name.endswith(".txt"):
 
-        jd_skills = extract_jd_skills(
-            jd_text
-        )
+            jd_text = jd_file.read().decode(
+                "utf-8"
+            )
 
-        match_score = calculate_match_score(
-            skills,
-            jd_skills
-        )
+        # PDF File
+        elif jd_file.name.endswith(".pdf"):
 
-        missing_skills = get_missing_skills(
-            skills,
-            jd_skills
-        )
+            with open(
+                "uploaded_jd.pdf",
+                "wb"
+            ) as f:
+
+                f.write(
+                    jd_file.getbuffer()
+                )
+
+            jd_text = extract_text(
+                "uploaded_jd.pdf"
+            )
+
+        if jd_text:
+
+            jd_skills = extract_jd_skills(
+                jd_text
+            )
+
+            match_score = calculate_match_score(
+                skills,
+                jd_skills
+            )
+
+            missing_skills = get_missing_skills(
+                skills,
+                jd_skills
+            )
 
     # ==========================================
-    # DASHBOARD
+    # SUCCESS MESSAGE
     # ==========================================
 
     st.success(
         "Resume Uploaded Successfully"
     )
+
+    # ==========================================
+    # DASHBOARD METRICS
+    # ==========================================
 
     col1, col2, col3 = st.columns(3)
 
@@ -185,8 +214,12 @@ if resume_file:
         "📊 ATS Analysis"
     )
 
+    st.subheader(
+        "ATS Progress"
+    )
+
     st.progress(
-        min(ats_score, 100)
+        min(int(ats_score), 100)
     )
 
     st.write(
@@ -216,17 +249,39 @@ if resume_file:
         )
 
     # ==========================================
-    # JOB MATCH
+    # SKILLS CHART
     # ==========================================
 
-    if jd_file:
+    st.subheader(
+        "📈 Skills Chart"
+    )
+
+    chart_data = pd.DataFrame(
+        {
+            "Skills": [len(skills)]
+        }
+    )
+
+    st.bar_chart(
+        chart_data
+    )
+
+    # ==========================================
+    # JOB MATCH ANALYSIS
+    # ==========================================
+
+    if jd_file is not None:
 
         st.header(
             "🎯 Job Match Analysis"
         )
 
+        st.subheader(
+            "Job Match Progress"
+        )
+
         st.progress(
-            int(match_score)
+            min(int(match_score), 100)
         )
 
         st.write(
@@ -237,11 +292,13 @@ if resume_file:
             "Required Skills"
         )
 
-        for skill in jd_skills:
+        if jd_skills:
 
-            st.write(
-                f"📌 {skill}"
-            )
+            for skill in jd_skills:
+
+                st.write(
+                    f"📌 {skill}"
+                )
 
         st.subheader(
             "Missing Skills"
