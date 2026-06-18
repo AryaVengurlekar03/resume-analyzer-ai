@@ -1,40 +1,71 @@
-def calculate_ats_score(resume_text, skills):
+from parser import (
+    detect_education,
+    detect_experience,
+    detect_projects,
+    detect_certifications
+)
+
+
+def calculate_ats_score(
+    resume_text,
+    skills
+):
 
     score = 0
 
-    # Skills Score
-    skills_score = min(len(skills) * 4, 40)
-    score += skills_score
+    # Skills (30 marks)
+    skill_score = min(
+        len(skills) * 3,
+        30
+    )
 
-    # Education
-    if "education" in resume_text.lower():
+    score += skill_score
+
+    # Education (15 marks)
+    if detect_education(
+        resume_text
+    ) != "Education Not Found":
+
+        score += 15
+
+    # Experience (25 marks)
+    if detect_experience(
+        resume_text
+    ) != "No Experience Found":
+
+        score += 25
+
+    # Projects (20 marks)
+    if detect_projects(
+        resume_text
+    ):
+
         score += 20
 
-    # Projects
-    if "project" in resume_text.lower():
-        score += 20
+    # Certifications (10 marks)
+    if detect_certifications(
+        resume_text
+    ):
 
-    # Experience
-    if "experience" in resume_text.lower():
-        score += 20
+        score += 10
 
-    return score
+    return min(score, 100)
+
+
 def get_rating(score):
 
-    if score >= 80:
+    if score >= 85:
         return "EXCELLENT"
 
-    elif score >= 60:
+    elif score >= 70:
         return "GOOD"
 
-    elif score >= 40:
+    elif score >= 50:
         return "AVERAGE"
 
     else:
         return "NEEDS IMPROVEMENT"
-    
 
-#recommendation
 
 def get_recommendations(score):
 
@@ -52,6 +83,12 @@ def get_recommendations(score):
 
         recommendations.append(
             "Mention internships or experience"
+        )
+
+    else:
+
+        recommendations.append(
+            "Resume looks strong"
         )
 
     return recommendations

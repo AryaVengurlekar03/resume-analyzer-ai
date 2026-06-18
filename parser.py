@@ -101,3 +101,46 @@ def detect_experience(text):
         return "Analyst Experience Found"
 
     return "No Experience Found"
+
+
+def detect_projects(text):
+
+    text = text.lower()
+
+    project_keywords = [
+        "project",
+        "developed",
+        "built",
+        "created",
+        "designed",
+        "implemented"
+    ]
+
+    for word in project_keywords:
+
+        if word in text:
+            return True
+
+    return False
+
+
+def detect_certifications(text):
+
+    text = text.lower()
+
+    certification_keywords = [
+        "certification",
+        "certificate",
+        "oracle",
+        "aws",
+        "coursera",
+        "udemy",
+        "nptel"
+    ]
+
+    for word in certification_keywords:
+
+        if word in text:
+            return True
+
+    return False
