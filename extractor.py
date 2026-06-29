@@ -15,4 +15,4 @@ def extract_text(pdf_path):
 
                 text += page_text + "\n"
 
-    return text
+    return text 
